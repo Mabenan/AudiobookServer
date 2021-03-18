@@ -1,0 +1,23 @@
+{
+  "name": "audiobookserver",
+  "version": "1.0.0",
+  "description": "AudiobookServer based on MEP (Mongo Express Parse)",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mabenan/AudiobookServer.git"
+  },
+  "author": "",
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/Mabenan/AudiobookServer/issues"
+  },
+  "homepage": "https://github.com/Mabenan/AudiobookServer#readme",
+  "dependencies": {
+    "parse-server": "^4.5.0",
+    "unirest": "^0.6.0"
+  }
+}
