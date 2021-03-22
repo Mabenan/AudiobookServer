@@ -1,22 +1,36 @@
+import * as ParseServer from "parse-server";
+import * as serve from "./audiostream/serve"; 
+import * as auth from "./audiostream/auth"; 
+import * as express from "express";
+import * as fs from "fs";
+import * as https from "https";
+import * as http from "http";
 
-var express = require("express");
-var ParseServer = require("parse-server").ParseServer;
-var app = express();
-var https = require("https");
-var http = require("http");
-var fs = require("fs");
+import * as cloud from "./cloud/main";
 
-var auth = require("./audiostream/auth");
-var serve = require("./audiostream/serve");
+const app = express();
 
-function startServer(err) {
-    var config = {};
+class ServerConfig{
+    PARSE_APPNAME: string;
+    PARSE_DATABASEURI: string;
+    PARSE_APPID: string;
+    PRASE_MASTERKEY: string;
+    PARSE_SERVERURL: string;
+    PARSE_MASTERKEY: string;
+    PARSE_PUBLICSERVERURL: string;
+    ROUTE: string;
+    PORT: number;
+}
+
+
+function startServer() {
+    var config : ServerConfig = new ServerConfig();
     try {
         config = require(__dirname + "/config.json");
     } catch (error) {
         console.log("Config not found in " + __dirname + "/config.json");
     }
-    var api = new ParseServer({
+    var api = new ParseServer.ParseServer({
         appName: process.env.PARSE_APPNAME || config.PARSE_APPNAME || "audiobook",
         databaseURI:
             process.env.PARSE_DATABASEURI || config.PARSE_DATABASEURI || "mongodb://mongo:27017/audiobookdev",
@@ -26,14 +40,13 @@ function startServer(err) {
         publicServerURL:
             process.env.PARSE_PUBLICSERVERURL || config.PARSE_PUBLICSERVERURL || "http://127.0.0.1:1337/",
         allowHeaders: ["X-Parse-Installation-Id"],
-        cloud: __dirname + "/cloud/main.js",
+        cloud: __dirname + "/cloud/main",
         
     });
-    Parse.Config.get({useMasterKey: true}).set("audiobookLocation", process.env.AUDIOBOOK_SRC || config.AUDIOBOOK_SRC || __dirname + "/audiobooks");
-    app.use(auth(
+    app.use(auth.auth(
     process.env.PARSE_APPID || config.PARSE_APPID || "ABCDEFG"))
     app.use(process.env.ROUTE || config.ROUTE || "/", api);
-    app.use("/stream", serve)
+    app.use("/stream", serve.serve)
     try {
         var privateKey = fs.readFileSync('sslcert/server.key', 'utf8');
         var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');

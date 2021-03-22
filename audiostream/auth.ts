@@ -1,11 +1,12 @@
 var unirest = require("unirest");
+import { Request, Response } from "express";
+import { Cloud } from "parse";
 
 
 
+export function auth(appID : string) {
 
-module.exports = function (appID) {
-
-    return function auth(req, res, next) {
+    return function auth(req: Request, res: Response, next: CallableFunction) {
         if (req.path.includes("stream")) {
             if (!req.headers["x-parse-session-token"]) {
                 res.status(401).send("not authorized");
@@ -16,10 +17,9 @@ module.exports = function (appID) {
                 url: Parse.serverURL + 'users/me',
                 headers: {
                     'X-Parse-Application-Id': appID,
-                    'X-Parse-Session-Token': req.headers["x-parse-session-token"]
+                    'X-Parse-Session-Token': req.headers["x-parse-session-token"].toString()
                 }
             }).then(function (userData) {
-                req.user = Parse.Object.fromJSON(userData.data);
                 next();
             }, function (error) {
                 res.status(401).send("not authorized");

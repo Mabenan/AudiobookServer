@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": true,
+        "moduleResolution": "Node",
+        "allowSyntheticDefaultImports": true,
+        "outDir": "./build/"
+    },
+    "ts-node": {
+      "files": true
+    },
+    "files": [ "index.ts" ],
+    "include": [ "audiostream/**/*","could/**/*", "decs.d.ts" ],
+}
