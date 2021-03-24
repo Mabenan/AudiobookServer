@@ -16,14 +16,16 @@ class ServerConfig{
     PARSE_APPNAME: string;
     PARSE_DATABASEURI: string;
     PARSE_APPID: string;
-    PRASE_MASTERKEY: string;
-    PARSE_SERVERURL: string;
     PARSE_MASTERKEY: string;
+    PARSE_SERVERURL: string;
     PARSE_PUBLICSERVERURL: string;
     ROUTE: string;
     PORT: number;
+    LOCALPORT: number;
 }
-
+function cliAddress(req: any) {
+    return req.connection.remoteAddress || req.socket.remoteAddress || req.headers['x-forwarded-for'];
+  }
 
 function startServer() {
     var config : ServerConfig = new ServerConfig();
@@ -38,7 +40,7 @@ function startServer() {
             process.env.PARSE_DATABASEURI || config.PARSE_DATABASEURI || "mongodb://mongo:27017/audiobook",
         appId: process.env.PARSE_APPID || config.PARSE_APPID || "ABCDEFG",
         masterKey: process.env.PARSE_MASTERKEY || config.PARSE_MASTERKEY || "ABCDEFG",
-        serverURL: process.env.PARSE_SERVERURL || config.PARSE_SERVERURL || "http://localhost:1337/",
+        serverURL: process.env.PARSE_SERVERURL || config.PARSE_SERVERURL || "http://localhost:13371/",
         publicServerURL:
             process.env.PARSE_PUBLICSERVERURL || config.PARSE_PUBLICSERVERURL || "http://127.0.0.1:1337/",
         allowHeaders: ["X-Parse-Installation-Id"],
@@ -58,9 +60,19 @@ function startServer() {
         httpsServer.listen(process.env.PORT || config.PORT || "1337");
 
     } catch (error) {
-        var httpServer = http.createServer(app);
-        httpServer.listen(process.env.PORT || config.PORT || "1337");
 
     }
+    var httpServer = http.createServer(function (req, res) {
+        console.log(cliAddress(req));
+        if (!cliAddress(req).includes("127.0.0.1")) // put the IP address here
+        {
+                res.end();
+    
+        }else{
+            app(req,res);
+        }
+    
+    });
+    httpServer.listen(process.env.LOCALPORT || config.LOCALPORT || "13371");
 }
 startServer();
