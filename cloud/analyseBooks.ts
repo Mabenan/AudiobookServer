@@ -2,17 +2,46 @@ import { Object } from "parse";
 import * as glob from "glob";
 import { parseFile } from "music-metadata";
 import * as path from "path";
+import { Album } from "../data/Album";
+import { Track } from "../data/Track";
 
 export class BookAnalyse {
 
 
     analyseFiles(files: string[], src: string) {
         return new Promise<void>(async (res, rej) => {
-            files.forEach((file) => {
-                parseFile(path.join(src, file)).then((metadata) => {
-                    console.log(metadata.common.album);
-                });
-            });
+            for (let index = 0; index < files.length; index++) {
+                const file = files[index];
+                var metadata = await parseFile(path.join(src, file));
+                var albumQuery = new Parse.Query<Album>("Album");
+                albumQuery.equalTo("Name", metadata.common.album);
+                var albums = await albumQuery.find({ useMasterKey: true });
+                var album : Album;
+                if(albums.length == 1){
+                    console.log("Album found");
+                    album = albums[0];
+                }else{
+                    console.log("Album not found");
+                    album = new Album();
+                    album.Name = metadata.common.album;
+                    album = await album.save(null,{ useMasterKey: true });
+                }
+                var trackQuery = new Parse.Query<Track>("Track");
+                trackQuery.equalTo("File", file);
+                if(await trackQuery.count({useMasterKey: true}) >= 1){
+                    continue;
+                }else{
+                    var track = new Track();
+                    track.Name = metadata.common.title;
+                    track.Order = metadata.common.disk.no * 100 + metadata.common.track.no;
+                    track.File = file;
+                    track.Album = album;
+                    track = await track.save(null, {useMasterKey: true});
+                    album.Tracks.add(track);
+                    await album.save(null, {useMasterKey: true});
+                }
+                
+            }
             res();
         });
     }
@@ -30,11 +59,11 @@ export class BookAnalyse {
         })
             .then(() => {
                 currentProc.set("running", false);
-                currentProc.save();
+                currentProc.save(null,{ useMasterKey: true });
             })
             .catch(() => {
                 currentProc.set("running", false);
-                currentProc.save();
+                currentProc.save(null,{ useMasterKey: true });
             });
     }
 

@@ -17,7 +17,7 @@ Parse.Cloud.define(
     }
     const processQuery = new Parse.Query("Processes");
     processQuery.equalTo("Name", "AnalyseBooks");
-    const results = await processQuery.find();
+    const results = await processQuery.find({useMasterKey: true});
     var currentProc;
     if (results.length <= 0) {
       currentProc = new Parse.Object("Processes");
@@ -31,7 +31,7 @@ Parse.Cloud.define(
     } else {
       currentProc.set("running", true);
     }
-    currentProc.save();
+    currentProc.save(null,{useMasterKey: true}).catch((err) => console.log(err));
     analyseBooks(currentProc);
     return "process startet";
   });

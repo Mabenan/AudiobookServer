@@ -7,11 +7,12 @@
         "sourceMap": true,
         "moduleResolution": "Node",
         "allowSyntheticDefaultImports": true,
-        "outDir": "./build/"
+        "outDir": "./build/",
+        "target": "ES6"
     },
     "ts-node": {
       "files": true
     },
     "files": [ "index.ts" ],
-    "include": [ "audiostream/**/*","could/**/*", "decs.d.ts" ],
+    "include": [ "audiostream/**/*","could/**/*", "decs.d.ts", "data/**/*" ],
 }

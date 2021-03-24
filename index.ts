@@ -5,8 +5,10 @@ import * as express from "express";
 import * as fs from "fs";
 import * as https from "https";
 import * as http from "http";
-
+import {Album} from "./data/Album";
 import * as cloud from "./cloud/main";
+
+Parse.Object.registerSubclass("Album", Album);
 
 const app = express();
 
@@ -33,7 +35,7 @@ function startServer() {
     var api = new ParseServer.ParseServer({
         appName: process.env.PARSE_APPNAME || config.PARSE_APPNAME || "audiobook",
         databaseURI:
-            process.env.PARSE_DATABASEURI || config.PARSE_DATABASEURI || "mongodb://mongo:27017/audiobookdev",
+            process.env.PARSE_DATABASEURI || config.PARSE_DATABASEURI || "mongodb://mongo:27017/audiobook",
         appId: process.env.PARSE_APPID || config.PARSE_APPID || "ABCDEFG",
         masterKey: process.env.PARSE_MASTERKEY || config.PARSE_MASTERKEY || "ABCDEFG",
         serverURL: process.env.PARSE_SERVERURL || config.PARSE_SERVERURL || "http://localhost:1337/",
@@ -41,7 +43,7 @@ function startServer() {
             process.env.PARSE_PUBLICSERVERURL || config.PARSE_PUBLICSERVERURL || "http://127.0.0.1:1337/",
         allowHeaders: ["X-Parse-Installation-Id"],
         cloud: __dirname + "/cloud/main",
-        
+        allowClientClassCreation: false
     });
     app.use(auth.auth(
     process.env.PARSE_APPID || config.PARSE_APPID || "ABCDEFG"))

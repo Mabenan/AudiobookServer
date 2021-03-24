@@ -1,6 +1,6 @@
 {
-    "watch": ["./index.ts", "./audiostream/**/*", "./cloud/**/*"],
+    "watch": ["./index.ts", "./audiostream/**/*", "./cloud/**/*", "./data/**/*"],
     "ext": "ts,json",
     "ignore": ["src/**/*.spec.ts"],
-    "exec": "ts-node ./index.ts"   
+    "exec": "node --inspect -r ts-node/register ./index.ts"   
   }

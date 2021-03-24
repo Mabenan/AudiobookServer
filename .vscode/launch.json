@@ -9,9 +9,10 @@
       "type": "node",
       "request": "attach",
       "cwd": "${workspaceRoot}",
+      "processId": "${command:PickProcess}",
       "restart": true,
       "port": 5858,
       "internalConsoleOptions": "neverOpen"
-    }
+    },
   ]
 }
