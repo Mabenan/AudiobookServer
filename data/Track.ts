@@ -32,6 +32,13 @@ export class Track extends Parse.Object {
     public set Album(value : Album) {
         this.set("Album", value);
     }
+    public get Metadata() : string{
+        return this.get("Metadata");
+    }
+
+    public set Metadata(value: string){
+        this.set("Metadata", value);
+    }
 
     constructor(){
         super("Track");

@@ -1,3 +1,4 @@
+import { Cloud } from "parse";
 import { BookAnalyse } from "./analyseBooks";
 
 const fs = require("fs");
@@ -9,29 +10,41 @@ function analyseBooks(currentProc : Parse.Object) {
   return new BookAnalyse().analyseBooks(currentProc);
 }
 
+Parse.Cloud.job("analyseBooks", (req) => {
+  runProcess("AnalyseBooks", analyseBooks);
+  return new Promise<void>((res,rej)=>{
+    res();
+  })
+})
+
+async function runProcess(name: string, cb: CallableFunction): Promise<string>{
+  const processQuery = new Parse.Query("Processes");
+  processQuery.equalTo("Name", name);
+  const results = await processQuery.find({useMasterKey: true});
+  var currentProc;
+  if (results.length <= 0) {
+    currentProc = new Parse.Object("Processes");
+    currentProc.set("Name", name);
+  } else {
+    currentProc = results[0];
+  }
+
+  if (currentProc.get("running")) {
+    return "already running";
+  } else {
+    currentProc.set("running", true);
+  }
+  currentProc.save(null,{useMasterKey: true}).catch((err) => console.log(err));
+  cb(currentProc);
+  return "process startet";
+  
+}
+
 Parse.Cloud.define(
   "analyseBooks",
   async (request: Parse.Cloud.FunctionRequest) => {
     if(request.user == null){
       return "not auth";
     }
-    const processQuery = new Parse.Query("Processes");
-    processQuery.equalTo("Name", "AnalyseBooks");
-    const results = await processQuery.find({useMasterKey: true});
-    var currentProc;
-    if (results.length <= 0) {
-      currentProc = new Parse.Object("Processes");
-      currentProc.set("Name", "AnalyseBooks");
-    } else {
-      currentProc = results[0];
-    }
-
-    if (currentProc.get("running")) {
-      return "already running";
-    } else {
-      currentProc.set("running", true);
-    }
-    currentProc.save(null,{useMasterKey: true}).catch((err) => console.log(err));
-    analyseBooks(currentProc);
-    return "process startet";
+    return runProcess("AnalyseBooks", analyseBooks);
   });

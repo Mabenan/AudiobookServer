@@ -4,7 +4,7 @@
   "description": "AudiobookServer based on MEP (Mongo Express Parse)",
   "main": "index.ts",
   "scripts": {
-    "dashboard": "parse-dashboard --dev --appId ABCDEFG --masterKey ABCDEFG --serverURL \"http://127.0.0.1:1337/\" --appName Audiobook",
+    "dashboard": "parse-dashboard --dev --appId ABCDEFG --masterKey ABCDEFG --serverURL \"http://127.0.0.1:13371/\" --appName Audiobook",
     "build": "tsc --build",
     "start": "nodemon"
   },

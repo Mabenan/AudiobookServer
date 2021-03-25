@@ -30,20 +30,22 @@ function cliAddress(req: any) {
 function startServer() {
     var config : ServerConfig = new ServerConfig();
     try {
+        if(fs.existsSync(__dirname+"/config.json")){
         config = require(__dirname + "/config.json");
+        }
     } catch (error) {
         console.log("Config not found in " + __dirname + "/config.json");
     }
     var api = new ParseServer.ParseServer({
         appName: process.env.PARSE_APPNAME || config.PARSE_APPNAME || "audiobook",
         databaseURI:
-            process.env.PARSE_DATABASEURI || config.PARSE_DATABASEURI || "mongodb://mongo:27017/audiobook",
+            process.env.PARSE_DATABASEURI || config.PARSE_DATABASEURI || "mongodb://mongo:27017/audiobookdev",
         appId: process.env.PARSE_APPID || config.PARSE_APPID || "ABCDEFG",
         masterKey: process.env.PARSE_MASTERKEY || config.PARSE_MASTERKEY || "ABCDEFG",
         serverURL: process.env.PARSE_SERVERURL || config.PARSE_SERVERURL || "http://localhost:13371/",
         publicServerURL:
             process.env.PARSE_PUBLICSERVERURL || config.PARSE_PUBLICSERVERURL || "http://127.0.0.1:1337/",
-        allowHeaders: ["X-Parse-Installation-Id"],
+        allowHeaders: ["X-Parse-Installation-Id", "X-Parse-Application-Id"],
         cloud: __dirname + "/cloud/main",
         allowClientClassCreation: false
     });
@@ -58,13 +60,16 @@ function startServer() {
         var credentials = { key: privateKey, cert: certificate };
         var httpsServer = https.createServer(credentials, app);
         httpsServer.listen(process.env.PORT || config.PORT || "1337");
+        ParseServer.ParseServer.createLiveQueryServer(httpsServer);
 
     } catch (error) {
 
     }
     var httpServer = http.createServer(function (req, res) {
-        console.log(cliAddress(req));
-        if (!cliAddress(req).includes("127.0.0.1")) // put the IP address here
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Headers', '*');
+        if (!cliAddress(req).includes("127.0.0.1") 
+    && cliAddress(req) !== "::1") // put the IP address here
         {
                 res.end();
     
@@ -74,5 +79,6 @@ function startServer() {
     
     });
     httpServer.listen(process.env.LOCALPORT || config.LOCALPORT || "13371");
+    ParseServer.ParseServer.createLiveQueryServer(httpServer);
 }
 startServer();
