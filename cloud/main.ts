@@ -1,6 +1,6 @@
 import { Cloud } from "parse";
 import { BookAnalyse } from "./analyseBooks";
-
+import { ThumbResize } from "./thumbResize";
 const fs = require("fs");
 const glob = require("glob");
 const path = require("path");
@@ -10,8 +10,19 @@ function analyseBooks(currentProc : Parse.Object) {
   return new BookAnalyse().analyseBooks(currentProc);
 }
 
+function resizeThumbs(currentProc : Parse.Object) {
+  return new ThumbResize().resizeThumbs(currentProc);
+}
+
 Parse.Cloud.job("analyseBooks", (req) => {
   runProcess("AnalyseBooks", analyseBooks);
+  return new Promise<void>((res,rej)=>{
+    res();
+  })
+})
+
+Parse.Cloud.job("resizeThumbs", (req) => {
+  runProcess("ResizeThumbs", resizeThumbs);
   return new Promise<void>((res,rej)=>{
     res();
   })
