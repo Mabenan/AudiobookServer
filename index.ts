@@ -54,13 +54,14 @@ function startServer() {
     app.use(process.env.ROUTE || config.ROUTE || "/", api);
     app.use("/stream", serve.serve)
     try {
-        var privateKey = fs.readFileSync('sslcert/server.key', 'utf8');
-        var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
+        var privateKey = fs.readFileSync(__dirname + '/sslcert/server.key', 'utf8');
+        var certificate = fs.readFileSync(__dirname + '/sslcert/server.crt', 'utf8');
 
         var credentials = { key: privateKey, cert: certificate };
         var httpsServer = https.createServer(credentials, app);
         httpsServer.listen(process.env.PORT || config.PORT || "1337");
         ParseServer.ParseServer.createLiveQueryServer(httpsServer);
+        console.log("https started");
 
     } catch (error) {
 
