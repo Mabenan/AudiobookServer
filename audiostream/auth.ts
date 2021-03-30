@@ -8,7 +8,7 @@ export function auth(appID : string) {
 
     return function auth(req: Request, res: Response, next: CallableFunction) {
         if(req.method == "OPTIONS"){
-            res.status(200).send();
+            next();
             return;
         }
         if (req.path.includes("stream")) {
