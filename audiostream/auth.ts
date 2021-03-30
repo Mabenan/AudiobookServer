@@ -7,6 +7,10 @@ import { Cloud } from "parse";
 export function auth(appID : string) {
 
     return function auth(req: Request, res: Response, next: CallableFunction) {
+        if(req.method == "OPTIONS"){
+            res.status(200).send();
+            return;
+        }
         if (req.path.includes("stream")) {
             if (!req.headers["x-parse-session-token"]) {
                 res.status(401).send("not authorized");
