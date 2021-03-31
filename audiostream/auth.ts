@@ -8,6 +8,8 @@ export function auth(appID : string) {
 
     return function auth(req: Request, res: Response, next: CallableFunction) {
         if(req.method == "OPTIONS"){
+            
+            res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS,HEAD');
             next();
             return;
         }
