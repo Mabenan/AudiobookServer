@@ -70,7 +70,8 @@ function startServer() {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Headers', '*');
         if (!cliAddress(req).includes("127.0.0.1") 
-    && cliAddress(req) !== "::1") // put the IP address here
+    && cliAddress(req) !== "::1"
+    && !cliAddress(req).includes("192.168.")) // put the IP address here
         {
                 res.end();
     
