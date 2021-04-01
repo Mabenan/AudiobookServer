@@ -1,6 +1,7 @@
 import { Cloud } from "parse";
 import { BookAnalyse } from "./analyseBooks";
 import { ThumbResize } from "./thumbResize";
+import {TrackInfoCollector} from "./trackInfoCollector";
 const fs = require("fs");
 const glob = require("glob");
 const path = require("path");
@@ -12,6 +13,10 @@ function analyseBooks(currentProc : Parse.Object) {
 
 function resizeThumbs(currentProc : Parse.Object) {
   return new ThumbResize().resizeThumbs(currentProc);
+}
+
+function collectTrackInfo(currentProc : Parse.Object) {
+  return new TrackInfoCollector().collectTrackInfo(currentProc);
 }
 
 Parse.Cloud.job("analyseBooks", (req) => {
@@ -27,6 +32,14 @@ Parse.Cloud.job("resizeThumbs", (req) => {
     res();
   })
 })
+
+Parse.Cloud.job("collectTrackInfo", (req) => {
+  runProcess("CollectTrackInfo", collectTrackInfo);
+  return new Promise<void>((res,rej)=>{
+    res();
+  })
+
+});
 
 async function runProcess(name: string, cb: CallableFunction): Promise<string>{
   const processQuery = new Parse.Query("Processes");

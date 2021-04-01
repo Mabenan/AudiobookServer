@@ -40,6 +40,21 @@ export class Track extends Parse.Object {
         this.set("Metadata", value);
     }
 
+    public get Size() : number {
+        return this.get("Size");
+    }
+
+    public set Size(value: number ){
+        this.set("Size", value);
+    }
+    public get Hash() : string {
+        return this.get("Hash");
+    }
+
+    public set Hash(value: string ){
+        this.set("Hash", value);
+    }
+
     constructor(){
         super("Track");
     }

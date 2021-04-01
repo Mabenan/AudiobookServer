@@ -7,8 +7,10 @@ import * as https from "https";
 import * as http from "http";
 import {Album} from "./data/Album";
 import * as cloud from "./cloud/main";
+import { Track } from "./data/Track";
 
 Parse.Object.registerSubclass("Album", Album);
+Parse.Object.registerSubclass("Track", Track);
 
 const app = express();
 
@@ -51,8 +53,8 @@ function startServer() {
     });
     app.use(auth.auth(
     process.env.PARSE_APPID || config.PARSE_APPID || "ABCDEFG"))
+    app.use("/stream", serve.serve);
     app.use(process.env.ROUTE || config.ROUTE || "/", api);
-    app.use("/stream", serve.serve)
     try {
         var privateKey = fs.readFileSync(__dirname + '/sslcert/server.key', 'utf8');
         var certificate = fs.readFileSync(__dirname + '/sslcert/server.crt', 'utf8');
@@ -73,6 +75,7 @@ function startServer() {
     && cliAddress(req) !== "::1"
     && !cliAddress(req).includes("192.168.")) // put the IP address here
         {
+            console.log(cliAddress(req));
                 res.end();
     
         }else{
