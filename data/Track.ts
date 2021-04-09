@@ -1,7 +1,13 @@
 import { Album } from "./Album";
 
 export class Track extends Parse.Object {
-
+    
+    public get Length() : number {
+        return this.get("Length");
+    }
+    public set Length(length: number) {
+        this.set("Length", length);
+    }
     public get Name() : string{
         return this.get("Name");
     }
