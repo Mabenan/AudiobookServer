@@ -71,16 +71,8 @@ function startServer() {
     var httpServer = http.createServer(function (req, res) {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Headers', '*');
-        if (!cliAddress(req).includes("127.0.0.1") 
-    && cliAddress(req) !== "::1"
-    && !cliAddress(req).includes("192.168.")) // put the IP address here
-        {
-            console.log(cliAddress(req));
-                res.end();
-    
-        }else{
+        
             app(req,res);
-        }
     
     });
     httpServer.listen(process.env.LOCALPORT || config.LOCALPORT || "13371");
