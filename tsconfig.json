@@ -14,5 +14,5 @@
       "files": true
     },
     "files": [ "index.ts" ],
-    "include": [ "audiostream/**/*","could/**/*", "decs.d.ts", "data/**/*" ],
+    "include": [ "audiostream/**/*","cloud/**/*", "decs.d.ts", "data/**/*" ],
 }
